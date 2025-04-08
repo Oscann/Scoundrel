@@ -2,6 +2,7 @@ package objects;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -49,6 +50,10 @@ public class Deck extends GameObject {
 
     public void addCard(Card c) {
         content.add(c);
+    }
+
+    public void enqueueCards(Collection<Card> cards) {
+        content.addAll(cards);
     }
 
     public Card drawCard() {

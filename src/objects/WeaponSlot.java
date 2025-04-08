@@ -62,7 +62,7 @@ public class WeaponSlot extends GameObject {
     }
 
     public Card getLastEnemy() {
-        return enemiesStack.peek();
+        return enemiesStack.peekLast();
     }
 
 }

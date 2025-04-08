@@ -15,7 +15,7 @@ import ui.components.buttons.Button;
 public class PlayerActionsPanel extends GameObject {
 
     private Game game;
-    private EState state = EState.DEFAULT;
+    private EPanelState state = EPanelState.DEFAULT;
     private ArrayList<Button> DEFAULT_STATE_BUTTONS = new ArrayList<>();
     private ArrayList<Button> ATTACKING_STATE_BUTTONS = new ArrayList<>();
     private ArrayList<Button> CHANGE_WEAPON_STATE_BUTTONS = new ArrayList<>();
@@ -40,6 +40,7 @@ public class PlayerActionsPanel extends GameObject {
 
         renderLifePoints(g);
         renderButtons(g);
+        renderRoomLabel(g);
     }
 
     @Override
@@ -100,6 +101,9 @@ public class PlayerActionsPanel extends GameObject {
         disposeWeaponButton.setHeight(buttonHeight);
         disposeWeaponButton.setX(this.x + BUTTON_AREA_PADDING);
         disposeWeaponButton.setY(this.y + BUTTON_AREA_PADDING);
+        disposeWeaponButton.setClickEvent(e -> {
+            game.handleWeaponChange();
+        });
 
         Button keepWeaponButton = new Button("KEEP WEAPON");
 
@@ -107,6 +111,10 @@ public class PlayerActionsPanel extends GameObject {
         keepWeaponButton.setHeight(buttonHeight);
         keepWeaponButton.setX((int) (this.x + BUTTON_AREA_PADDING));
         keepWeaponButton.setY((int) (this.y + BUTTON_AREA_PADDING + Window.screenSizeUnit + buttonHeight));
+        keepWeaponButton.setClickEvent(e -> {
+            game.resetTarget();
+            this.setState(EPanelState.DEFAULT);
+        });
 
         CHANGE_WEAPON_STATE_BUTTONS.add(disposeWeaponButton);
         CHANGE_WEAPON_STATE_BUTTONS.add(keepWeaponButton);
@@ -121,6 +129,17 @@ public class PlayerActionsPanel extends GameObject {
         g.setColor(Color.red);
 
         g.drawString(Integer.toString(game.getLifePoints()), lifePointX, lifePointY);
+    }
+
+    public void renderRoomLabel(Graphics g) {
+        int roomLabelSize = (int) Window.screenSizeUnit * 2;
+
+        int roomLabelX = this.x + this.width - roomLabelSize;
+        int roomLabelY = (int) (this.y + 2 * Window.screenSizeUnit);
+
+        g.setColor(Color.white);
+
+        g.drawString(Integer.toString(game.getNRoom()), roomLabelX, roomLabelY);
     }
 
     public void renderButtons(Graphics g) {
@@ -139,15 +158,15 @@ public class PlayerActionsPanel extends GameObject {
     }
 
     public ArrayList<Button> getCurrentStateButtons() {
-        return state == EState.DEFAULT ? DEFAULT_STATE_BUTTONS
-                : state == EState.ATTACKING ? ATTACKING_STATE_BUTTONS : CHANGE_WEAPON_STATE_BUTTONS;
+        return state == EPanelState.DEFAULT ? DEFAULT_STATE_BUTTONS
+                : state == EPanelState.ATTACKING ? ATTACKING_STATE_BUTTONS : CHANGE_WEAPON_STATE_BUTTONS;
     }
 
-    public void setState(EState state) {
+    public void setState(EPanelState state) {
         this.state = state;
     }
 
-    public static enum EState {
+    public static enum EPanelState {
         DEFAULT,
         ATTACKING,
         CHANGE_WEAPON
