@@ -45,13 +45,21 @@ public class Card extends GameObject {
         Point center = getCenterPoint();
 
         g.drawRect((int) center.getX(), (int) center.getY(), 20, 20);
-        g.drawString(Integer.toString(number), (int) (x + Window.screenSizeUnit),
-                (int) (y + 2 * Window.screenSizeUnit));
+        g.drawString(Integer.toString(number), (int) (x + Window.screenSizeUnit / 2),
+                (int) (y + Window.screenSizeUnit));
     }
 
     @Override
-    public void update(Graphics g) {
+    public void update() {
 
+    }
+
+    public ECardSuits getSuit() {
+        return this.suit;
+    }
+
+    public int getNumber() {
+        return this.number;
     }
 
     public static enum ECardSuits {

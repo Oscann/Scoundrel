@@ -2,13 +2,14 @@ package objects;
 
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 
 public abstract class GameObject {
     protected int x, y, width, height;
 
     public abstract void render(Graphics g);
 
-    public abstract void update(Graphics g);
+    public abstract void update();
 
     public Point getCenterPoint() {
         return new Point(x + width / 2, y + height / 2);
@@ -44,5 +45,24 @@ public abstract class GameObject {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, width, height);
+    }
+
+    public void setBounds(Rectangle bounds) {
+        this.width = bounds.width;
+        this.height = bounds.height;
+        this.x = bounds.x;
+        this.y = bounds.y;
+    }
+
+    public boolean isInBounds(Point p) {
+        return this.getBounds().contains(p);
+    }
+
+    public boolean isInBounds(int x, int y) {
+        return this.getBounds().contains(new Point(x, y));
     }
 }

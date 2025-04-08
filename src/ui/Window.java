@@ -1,15 +1,7 @@
 package ui;
 
-import java.awt.Cursor;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
-import javax.imageio.ImageIO;
-import javax.imageio.stream.FileImageInputStream;
-import javax.imageio.stream.ImageInputStream;
 import javax.swing.JFrame;
 
 public class Window extends JFrame {

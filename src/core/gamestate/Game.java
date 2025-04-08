@@ -2,12 +2,17 @@ package core.gamestate;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 
 import objects.Card;
+import objects.Deck;
+import objects.WeaponSlot;
 import objects.Card.ECardSuits;
 import ui.Window;
+import ui.components.panels.PlayerActionsPanel;
+import ui.components.panels.PlayerActionsPanel.EState;
 
 public class Game extends State {
     private int ROOM_FIRST_CARD_POSITION_X = (int) Window.screenSizeUnit * 50 - Card.BASE_WIDTH / 2;
@@ -15,19 +20,31 @@ public class Game extends State {
     private int ROOM_WIDTH = (int) (Card.BASE_WIDTH * 4 + 5 * Window.screenSizeUnit);
     private int ROOM_HEIGHT = (int) (Card.BASE_HEIGHT + 2 * Window.screenSizeUnit);
     private int DECK_POSITION_X = (int) Window.screenSizeUnit * 20;
+    private int SAFE_ZONE_LEFT_CORNER = (int) Window.screenSizeUnit * 50 - Card.BASE_WIDTH / 2
+            + (int) (Card.BASE_WIDTH * 4 + 5 * Window.screenSizeUnit);
 
-    private Queue<Card> deck;
+    private Deck deck;
+    private WeaponSlot weapon;
+    private PlayerActionsPanel panel;
     private int nRoom = 1;
     private Card[] room = new Card[4];
+    private int attackTargetCardIndex = -1;
+
+    private int playerLifePoints = 20;
 
     public Game() {
-        buildDeck();
-
-        drawCardFromDeck();
+        createDeck();
+        createWeaponSlot();
+        createActionsPanel();
     }
 
     @Override
     public void render(Graphics g) {
+
+        deck.render(g);
+        weapon.render(g);
+        panel.render(g);
+        renderRoomWrapper(g);
 
         for (int i = 0; i < room.length; i++) {
 
@@ -36,33 +53,63 @@ public class Game extends State {
 
             room[i].render(g);
         }
-
-        renderRoomWrapper(g);
-        renderDeck(g);
     }
 
     @Override
     public void update() {
+        int nCardsInRoom = getNCardsInRoom();
+
+        if (nCardsInRoom <= 1) {
+            populateRoom();
+        }
     }
 
     @Override
     public void restart() {
     }
 
-    public void buildDeck() {
-        deck = new LinkedList<Card>();
-
-        deck.add(new Card(10, ECardSuits.CLUBS));
-
+    public void createDeck() {
+        deck = new Deck();
+        deck.setX((int) (DECK_POSITION_X - Window.screenSizeUnit));
+        deck.setY((int) (ROOM_CARD_POSITION_Y - Window.screenSizeUnit));
     }
 
-    public void drawCardFromDeck() {
-        Card c = deck.remove();
+    public void createWeaponSlot() {
+        weapon = new WeaponSlot();
+
+        int weaponX = (int) (ROOM_FIRST_CARD_POSITION_X - Window.screenSizeUnit);
+        int weaponY = (int) (ROOM_CARD_POSITION_Y + Card.BASE_HEIGHT + 2 * Window.screenSizeUnit);
+
+        weapon.setX(weaponX);
+        weapon.setY(weaponY);
+    }
+
+    public void createActionsPanel() {
+
+        int panelX = (int) (ROOM_FIRST_CARD_POSITION_X + Card.BASE_WIDTH + 3 * Window.screenSizeUnit);
+        int panelY = (int) (ROOM_CARD_POSITION_Y + Card.BASE_HEIGHT + 2 * Window.screenSizeUnit);
+        int panelWidth = (int) (SAFE_ZONE_LEFT_CORNER - panelX - Window.screenSizeUnit);
+        int panelHeight = (int) (Card.BASE_HEIGHT + 2 * Window.screenSizeUnit);
+
+        panel = new PlayerActionsPanel(this, new Rectangle(panelX, panelY, panelWidth, panelHeight));
+    }
+
+    private void populateRoom() {
+        for (int i = 0; i < room.length; i++) {
+            if (room[i] == null)
+                drawCardFromDeck();
+        }
+
+        nRoom++;
+    }
+
+    private void drawCardFromDeck() {
+        Card c = deck.drawCard();
 
         addCardToRoom(c);
     }
 
-    public void addCardToRoom(Card c) {
+    private void addCardToRoom(Card c) {
         int i = 0;
 
         while (i < room.length) {
@@ -86,17 +133,111 @@ public class Game extends State {
         g.drawRect(roomX, roomY, ROOM_WIDTH, ROOM_HEIGHT);
     }
 
-    private void renderDeck(Graphics g) {
-        g.setColor(Color.getHSBColor(32, 82, 54));
+    public void handleCardClick(Card c, int index) {
+        ECardSuits cardSuit = c.getSuit();
 
-        int deckX = DECK_POSITION_X;
-        int deckY = ROOM_CARD_POSITION_Y;
-        int deckWrapperX = (int) (DECK_POSITION_X - Window.screenSizeUnit);
-        int deckWrapperY = (int) (ROOM_CARD_POSITION_Y - Window.screenSizeUnit);
-        int deckWrapperWidth = (int) (Card.BASE_WIDTH + 2 * Window.screenSizeUnit);
-        int deckWrapperHeight = (int) (Card.BASE_HEIGHT + 2 * Window.screenSizeUnit);
+        if (cardSuit == ECardSuits.DIAMONDS) {
+            weapon.setWeapon(c);
+            room[index] = null;
+        } else if (cardSuit == ECardSuits.HEARTS) {
+            playerLifePoints = Math.min(20, playerLifePoints + c.getNumber());
+            room[index] = null;
+        } else {
+            attackTargetCardIndex = index;
 
-        g.drawRect(deckWrapperX, deckWrapperY, deckWrapperWidth, deckWrapperHeight);
-        g.fillRect(deckX, deckY, Card.BASE_WIDTH, Card.BASE_HEIGHT);
+            if (weapon.getCurrWeapon() != null && weapon.getLastEnemy().getNumber() > c.getNumber())
+                panel.setState(EState.ATTACKING);
+            else {
+                handleAttack(false);
+            }
+        }
+    }
+
+    public void handleAttack(boolean armed) {
+        Card attackedCard = room[attackTargetCardIndex];
+        Card weaponCard = weapon.getCurrWeapon();
+
+        if (weaponCard == null)
+            armed = false;
+
+        int damage;
+
+        if (armed) {
+            damage = Math.max(attackedCard.getNumber() - weaponCard.getNumber(), 0);
+            weapon.addEnemyToStack(attackedCard);
+        } else {
+            damage = attackedCard.getNumber();
+        }
+
+        playerLifePoints -= damage;
+
+        room[attackTargetCardIndex] = null;
+
+        panel.setState(EState.DEFAULT);
+    }
+
+    public void run() {
+        System.out.println("Running");
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        Point clickPoint = e.getPoint();
+
+        if (deck.isInBounds(clickPoint)) {
+            drawCardFromDeck();
+        }
+
+        if (panel.isInBounds(clickPoint)) {
+            panel.handleClick(e);
+        }
+
+        for (int i = 0; i < room.length; i++) {
+            Card c = room[i];
+
+            if (c != null && c.isInBounds(clickPoint)) {
+                handleCardClick(c, i);
+            }
+        }
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
+    }
+
+    public int getNCardsInRoom() {
+        int count = 0;
+
+        for (Card c : room) {
+            if (c != null)
+                count++;
+        }
+
+        return count;
+    }
+
+    public int getLifePoints() {
+        return this.playerLifePoints;
     }
 }
