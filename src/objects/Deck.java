@@ -39,8 +39,9 @@ public class Deck extends GameObject {
 
         for (ECardSuits suit : ECardSuits.values()) {
             int maxCards = suit == ECardSuits.CLUBS || suit == ECardSuits.SPADES ? 13 : 10;
+            int startCard = suit == ECardSuits.CLUBS || suit == ECardSuits.SPADES ? 1 : 2;
 
-            for (int i = 1; i <= maxCards; i++) {
+            for (int i = startCard; i <= maxCards; i++) {
                 addCard(new Card(i, suit));
             }
         }

@@ -1,7 +1,5 @@
 package core.gamestate.constants;
 
-import java.awt.Font;
-
 import objects.constants.CardConstants;
 
 public class GameRenderingConstants {

@@ -43,6 +43,7 @@ public class Card extends GameObject {
         Font cardFont = new Font("Arial", Font.BOLD, (int) (Window.screenSizeUnit));
         g.setFont(cardFont);
         FontMetrics fontMetrics = g.getFontMetrics();
+        String numberLabel = getNumberLabel();
 
         g.setColor(Color.white);
         g.fillRect(getX(), getY(), width, height);
@@ -51,13 +52,12 @@ public class Card extends GameObject {
         int xPadding = (int) (x + Window.screenSizeUnit / 4);
         int yPadding = y + Window.screenSizeUnit;
         int cardNY = yPadding + fontMetrics.getHeight() / 2;
-        int cardNX = xPadding + (iconSize - fontMetrics.stringWidth(Integer.toString(number))) / 2;
+        int cardNX = xPadding + (iconSize - fontMetrics.stringWidth(numberLabel)) / 2;
 
         g.setColor(suit.getColor());
 
-        g.drawString(Integer.toString(number), cardNX,
+        g.drawString(numberLabel, cardNX,
                 cardNY);
-
         g.drawImage(suit.getIcon(), xPadding, yPadding + Window.screenSizeUnit, iconSize, iconSize, null);
     }
 
@@ -72,6 +72,14 @@ public class Card extends GameObject {
 
     public int getNumber() {
         return this.number;
+    }
+
+    public String getNumberLabel() {
+        return number == 1 ? "A"
+                : number == 11 ? "J"
+                        : number == 12 ? "Q"
+                                : number == 13 ? "K"
+                                        : Integer.toString(number);
     }
 
     public static enum ECardSuits {
