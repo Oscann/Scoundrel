@@ -1,14 +1,19 @@
 package objects;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
 
+import objects.constants.CardConstants;
 import ui.Window;
+import ui.utils.ImageHandling;
 
 public class Card extends GameObject {
-    public static final int BASE_WIDTH = (int) (2.00 * 4 * Window.screenSizeUnit);
-    public static final int BASE_HEIGHT = (int) (2.90 * 4 * Window.screenSizeUnit);
+    public static final int BASE_WIDTH = (int) (CardConstants.CARD_WIDTH_RATIO * 4 * Window.screenSizeUnit);
+    public static final int BASE_HEIGHT = (int) (CardConstants.CARD_HEIGHT_RATIO * 4 * Window.screenSizeUnit);
     private int number;
     private ECardSuits suit;
 
@@ -36,17 +41,31 @@ public class Card extends GameObject {
     @Override
     public void render(Graphics g) {
 
-        g.setColor(Color.white);
+        Font cardFont = new Font("Arial", Font.BOLD, (int) (Window.screenSizeUnit));
+        g.setFont(cardFont);
+        FontMetrics fontMetrics = g.getFontMetrics();
 
+        g.setColor(Color.white);
         g.fillRect(getX(), getY(), width, height);
 
-        g.setColor(suit == ECardSuits.SPADES || suit == ECardSuits.CLUBS ? Color.black : Color.RED);
+        int iconSize = (int) (1.5 * Window.screenSizeUnit);
+        int xPadding = (int) (x + Window.screenSizeUnit / 4);
+        int yPadding = (int) (y + Window.screenSizeUnit);
+        int cardNY = yPadding + fontMetrics.getHeight() / 2;
+        int cardNX = xPadding + (iconSize - fontMetrics.stringWidth(Integer.toString(number))) / 2;
 
-        Point center = getCenterPoint();
+        g.setColor(suit.getColor());
 
-        g.drawRect((int) center.getX(), (int) center.getY(), 20, 20);
-        g.drawString(Integer.toString(number), (int) (x + Window.screenSizeUnit / 2),
-                (int) (y + Window.screenSizeUnit));
+        g.drawString(Integer.toString(number), cardNX,
+                cardNY);
+
+        g.drawImage(suit.getIcon(), xPadding,
+                (int) (yPadding + Window.screenSizeUnit),
+                iconSize, iconSize, null);
+
+        // Point center = getCenterPoint();
+
+        // g.drawRect((int) center.getX(), (int) center.getY(), 20, 20);
     }
 
     @Override
@@ -63,9 +82,25 @@ public class Card extends GameObject {
     }
 
     public static enum ECardSuits {
-        SPADES,
-        CLUBS,
-        HEARTS,
-        DIAMONDS;
+        SPADES(CardConstants.SPADES_ICON_PATH, CardConstants.CARDS_BLACK),
+        CLUBS(CardConstants.CLUBS_ICON_PATH, CardConstants.CARDS_BLACK),
+        HEARTS(CardConstants.HEARTS_ICON_PATH, CardConstants.CARDS_RED),
+        DIAMONDS(CardConstants.DIAMONDS_ICON_PATH, CardConstants.CARDS_RED);
+
+        private BufferedImage icon;
+        private Color color;
+
+        private ECardSuits(String iconPath, Color color) {
+            this.icon = ImageHandling.loadImage(iconPath);
+            this.color = color;
+        }
+
+        public BufferedImage getIcon() {
+            return this.icon;
+        }
+
+        public Color getColor() {
+            return this.color;
+        }
     }
 }

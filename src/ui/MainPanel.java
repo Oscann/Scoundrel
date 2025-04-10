@@ -23,6 +23,7 @@ public class MainPanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        App.currState.render(g);
+        if (App.currState != null)
+            App.currState.render(g);
     }
 }
