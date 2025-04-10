@@ -7,6 +7,7 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
 
+import core.gamestate.constants.GameRenderingConstants;
 import objects.Card;
 import objects.Deck;
 import objects.WeaponSlot;
@@ -16,13 +17,21 @@ import ui.components.panels.PlayerActionsPanel;
 import ui.components.panels.PlayerActionsPanel.EPanelState;
 
 public class Game extends State {
-    private int ROOM_FIRST_CARD_POSITION_X = (int) Window.screenSizeUnit * 50 - Card.BASE_WIDTH / 2;
-    private int ROOM_CARD_POSITION_Y = (int) (10 * Window.screenSizeUnit);
-    private int ROOM_WIDTH = (int) (Card.BASE_WIDTH * 4 + 5 * Window.screenSizeUnit);
-    private int ROOM_HEIGHT = (int) (Card.BASE_HEIGHT + 2 * Window.screenSizeUnit);
-    private int DECK_POSITION_X = (int) Window.screenSizeUnit * 20;
-    private int SAFE_ZONE_LEFT_CORNER = (int) Window.screenSizeUnit * 50 - Card.BASE_WIDTH / 2
-            + (int) (Card.BASE_WIDTH * 4 + 5 * Window.screenSizeUnit);
+    private final int SAFE_ZONE_TOP = (int) (Window.screenHeight / 2
+            - GameRenderingConstants.HEIGHT_RATIO * Window.screenSizeUnit / 2);
+    private final int SAFE_ZONE_LEFT = (int) (Window.screenWidth / 2
+            - GameRenderingConstants.WIDTH_RATIO * Window.screenSizeUnit / 2);
+    private final int X_PADDING = (int) (GameRenderingConstants.X_PADDING_RATIO * Window.screenSizeUnit);
+    private final int Y_PADDING = (int) (GameRenderingConstants.Y_PADDING_RATIO * Window.screenSizeUnit);
+    private final int EFFECTIVE_TOP = SAFE_ZONE_TOP + Y_PADDING;
+    private final int EFFECTIVE_LEFT = SAFE_ZONE_LEFT + X_PADDING;
+
+    private final int DECK_POSITION_X = EFFECTIVE_LEFT;
+    private final int ROOM_POSITION_X = DECK_POSITION_X + Card.BASE_WIDTH + (int) (3 * Window.screenSizeUnit);
+    private final int ROOM_FIRST_CARD_POSITION_X = ROOM_POSITION_X + (int) (Window.screenSizeUnit);
+    private final int ROOM_CARDS_Y = EFFECTIVE_TOP + (int) (Window.screenSizeUnit);
+    private final int ROOM_WIDTH = Card.BASE_WIDTH * 4 + (int) (5 * Window.screenSizeUnit);
+    private final int ROOM_HEIGHT = Card.BASE_HEIGHT + (int) (2 * Window.screenSizeUnit);
 
     private Deck deck;
     private WeaponSlot weapon;
@@ -73,15 +82,15 @@ public class Game extends State {
 
     public void createDeck() {
         deck = new Deck();
-        deck.setX((int) (DECK_POSITION_X - Window.screenSizeUnit));
-        deck.setY((int) (ROOM_CARD_POSITION_Y - Window.screenSizeUnit));
+        deck.setX((int) (DECK_POSITION_X));
+        deck.setY((int) (EFFECTIVE_TOP));
     }
 
     public void createWeaponSlot() {
         weapon = new WeaponSlot();
 
-        int weaponX = (int) (ROOM_FIRST_CARD_POSITION_X - Window.screenSizeUnit);
-        int weaponY = (int) (ROOM_CARD_POSITION_Y + Card.BASE_HEIGHT + 2 * Window.screenSizeUnit);
+        int weaponX = ROOM_POSITION_X;
+        int weaponY = (int) (EFFECTIVE_TOP + Card.BASE_HEIGHT + 3 * Window.screenSizeUnit);
 
         weapon.setX(weaponX);
         weapon.setY(weaponY);
@@ -89,9 +98,9 @@ public class Game extends State {
 
     public void createActionsPanel() {
 
-        int panelX = (int) (ROOM_FIRST_CARD_POSITION_X + Card.BASE_WIDTH + 3 * Window.screenSizeUnit);
-        int panelY = (int) (ROOM_CARD_POSITION_Y + Card.BASE_HEIGHT + 2 * Window.screenSizeUnit);
-        int panelWidth = (int) (SAFE_ZONE_LEFT_CORNER - panelX - Window.screenSizeUnit);
+        int panelX = (int) (ROOM_POSITION_X + Card.BASE_WIDTH + 3 * Window.screenSizeUnit);
+        int panelY = (int) (EFFECTIVE_TOP + Card.BASE_HEIGHT + 3 * Window.screenSizeUnit);
+        int panelWidth = (int) (ROOM_WIDTH - Card.BASE_WIDTH - 3 * Window.screenSizeUnit);
         int panelHeight = (int) (Card.BASE_HEIGHT + 2 * Window.screenSizeUnit);
 
         panel = new PlayerActionsPanel(this, new Rectangle(panelX, panelY, panelWidth, panelHeight));
@@ -100,10 +109,7 @@ public class Game extends State {
     private void renderRoomWrapper(Graphics g) {
         g.setColor(Color.getHSBColor(32, 82, 54));
 
-        int roomX = (int) (ROOM_FIRST_CARD_POSITION_X - Window.screenSizeUnit);
-        int roomY = (int) (ROOM_CARD_POSITION_Y - Window.screenSizeUnit);
-
-        g.drawRect(roomX, roomY, ROOM_WIDTH, ROOM_HEIGHT);
+        g.drawRect(ROOM_POSITION_X, EFFECTIVE_TOP, ROOM_WIDTH, ROOM_HEIGHT);
     }
 
     public void handleCardClick(Card c, int index) {
@@ -207,7 +213,7 @@ public class Game extends State {
             if (room[i] == null) {
                 room[i] = c;
                 c.setX((int) (ROOM_FIRST_CARD_POSITION_X + (Card.BASE_WIDTH + Window.screenSizeUnit) * i));
-                c.setY(ROOM_CARD_POSITION_Y);
+                c.setY(ROOM_CARDS_Y);
                 break;
             }
 

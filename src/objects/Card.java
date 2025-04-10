@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import objects.constants.CardConstants;
@@ -12,8 +11,8 @@ import ui.Window;
 import ui.utils.ImageHandling;
 
 public class Card extends GameObject {
-    public static final int BASE_WIDTH = (int) (CardConstants.CARD_WIDTH_RATIO * 4 * Window.screenSizeUnit);
-    public static final int BASE_HEIGHT = (int) (CardConstants.CARD_HEIGHT_RATIO * 4 * Window.screenSizeUnit);
+    public static final int BASE_WIDTH = (int) (CardConstants.CARD_WIDTH_RATIO * Window.screenSizeUnit);
+    public static final int BASE_HEIGHT = (int) (CardConstants.CARD_HEIGHT_RATIO * Window.screenSizeUnit);
     private int number;
     private ECardSuits suit;
 
