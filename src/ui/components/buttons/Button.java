@@ -1,11 +1,14 @@
 package ui.components.buttons;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 
+import core.gamestate.constants.GameRenderingConstants;
 import objects.GameObject;
+import ui.Window;
 import ui.events.MouseClickEventHandler;
 
 public class Button extends GameObject {
@@ -20,8 +23,9 @@ public class Button extends GameObject {
 
     @Override
     public void render(Graphics g) {
-
         g.setColor(new Color(255, 255, 255, 70));
+        g.setFont(new Font(GameRenderingConstants.DEFAULT_FONT, Font.PLAIN, Window.screenSizeUnit));
+
         if (isHovering)
             g.fillRect(x, y, width, height);
 

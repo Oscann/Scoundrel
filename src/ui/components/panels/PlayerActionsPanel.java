@@ -1,6 +1,7 @@
 package ui.components.panels;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -8,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import core.gamestate.Game;
+import core.gamestate.constants.GameRenderingConstants;
 import objects.GameObject;
 import ui.Window;
 import ui.components.buttons.Button;
@@ -121,23 +123,25 @@ public class PlayerActionsPanel extends GameObject {
     }
 
     private void renderLifePoints(Graphics g) {
+        g.setColor(Color.red);
+        g.setFont(new Font(GameRenderingConstants.DEFAULT_FONT, Font.PLAIN, Window.screenSizeUnit));
+
         int lifePointSize = (int) Window.screenSizeUnit * 2;
 
         int lifePointX = this.x + this.width - lifePointSize;
         int lifePointY = (int) (this.y + Window.screenSizeUnit);
 
-        g.setColor(Color.red);
-
         g.drawString(Integer.toString(game.getLifePoints()), lifePointX, lifePointY);
     }
 
     public void renderRoomLabel(Graphics g) {
+        g.setColor(Color.white);
+        g.setFont(new Font(GameRenderingConstants.DEFAULT_FONT, Font.PLAIN, Window.screenSizeUnit));
+
         int roomLabelSize = (int) Window.screenSizeUnit * 2;
 
         int roomLabelX = this.x + this.width - roomLabelSize;
         int roomLabelY = (int) (this.y + 2 * Window.screenSizeUnit);
-
-        g.setColor(Color.white);
 
         g.drawString(Integer.toString(game.getNRoom()), roomLabelX, roomLabelY);
     }

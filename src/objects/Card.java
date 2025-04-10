@@ -49,7 +49,7 @@ public class Card extends GameObject {
 
         int iconSize = (int) (1.5 * Window.screenSizeUnit);
         int xPadding = (int) (x + Window.screenSizeUnit / 4);
-        int yPadding = (int) (y + Window.screenSizeUnit);
+        int yPadding = y + Window.screenSizeUnit;
         int cardNY = yPadding + fontMetrics.getHeight() / 2;
         int cardNX = xPadding + (iconSize - fontMetrics.stringWidth(Integer.toString(number))) / 2;
 
@@ -58,13 +58,7 @@ public class Card extends GameObject {
         g.drawString(Integer.toString(number), cardNX,
                 cardNY);
 
-        g.drawImage(suit.getIcon(), xPadding,
-                (int) (yPadding + Window.screenSizeUnit),
-                iconSize, iconSize, null);
-
-        // Point center = getCenterPoint();
-
-        // g.drawRect((int) center.getX(), (int) center.getY(), 20, 20);
+        g.drawImage(suit.getIcon(), xPadding, yPadding + Window.screenSizeUnit, iconSize, iconSize, null);
     }
 
     @Override
