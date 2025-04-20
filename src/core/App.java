@@ -9,7 +9,7 @@ public class App implements Runnable {
     public static Window window;
     public static MainPanel root;
     public static State currState;
-    private static final int FPS = 60, UPS = 200;
+    public static final int FPS = 60, UPS = 200;
 
     public static void main(String[] args) {
         start();

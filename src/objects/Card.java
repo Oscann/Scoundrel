@@ -6,6 +6,8 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import objects.animation.AnimationHandler;
+import objects.animation.animations.AbstractAnimation;
 import objects.constants.CardConstants;
 import ui.Window;
 import ui.utils.ImageHandling;
@@ -15,6 +17,7 @@ public class Card extends GameObject {
     public static final int BASE_HEIGHT = (int) (CardConstants.CARD_HEIGHT_RATIO * Window.screenSizeUnit);
     private int number;
     private ECardSuits suit;
+    private AnimationHandler<Card> animHandler = new AnimationHandler<Card>();
 
     public Card(int number, ECardSuits suit) {
         this.number = number;
@@ -63,7 +66,11 @@ public class Card extends GameObject {
 
     @Override
     public void update() {
+        animHandler.update();
+    }
 
+    public void setCurrAnimation(AbstractAnimation<Card> animation) {
+        this.animHandler.setCurrAnimation(animation);
     }
 
     public ECardSuits getSuit() {

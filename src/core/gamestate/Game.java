@@ -12,6 +12,7 @@ import objects.Card;
 import objects.Deck;
 import objects.WeaponSlot;
 import objects.Card.ECardSuits;
+import objects.animation.animations.CardDrawAnimation;
 import ui.Window;
 import ui.components.panels.PlayerActionsPanel;
 import ui.components.panels.PlayerActionsPanel.EPanelState;
@@ -69,10 +70,13 @@ public class Game extends State {
     public void update() {
         int nCardsInRoom = getNCardsInRoom();
 
-        deck.update();
-
         if (nCardsInRoom <= 1) {
             populateRoom();
+        }
+
+        for (int i = 0; i < room.length; i++) {
+            if (room[i] != null)
+                room[i].update();
         }
     }
 
@@ -193,8 +197,9 @@ public class Game extends State {
 
     private void populateRoom() {
         for (int i = 0; i < room.length; i++) {
-            if (room[i] == null)
+            if (room[i] == null) {
                 drawCardFromDeck();
+            }
         }
 
         nRoom++;
@@ -207,18 +212,31 @@ public class Game extends State {
     }
 
     private void addCardToRoom(Card c) {
+        int emptyIndex = getNextRoomEmptySpace();
+
+        if (emptyIndex == -1)
+            return;
+
+        Point deckCoords = new Point(deck.getX() + Window.screenSizeUnit, ROOM_CARDS_Y);
+        Point destinyCoords = new Point(ROOM_FIRST_CARD_POSITION_X + (Card.BASE_WIDTH +
+                Window.screenSizeUnit) * emptyIndex, ROOM_CARDS_Y);
+
+        room[emptyIndex] = c;
+        c.setCurrAnimation(new CardDrawAnimation(c, deckCoords, destinyCoords));
+    }
+
+    public int getNextRoomEmptySpace() {
         int i = 0;
 
         while (i < room.length) {
             if (room[i] == null) {
-                room[i] = c;
-                c.setX((int) (ROOM_FIRST_CARD_POSITION_X + (Card.BASE_WIDTH + Window.screenSizeUnit) * i));
-                c.setY(ROOM_CARDS_Y);
-                break;
+                return i;
             }
 
             i++;
         }
+
+        return -1;
     }
 
     public int getNRoom() {
