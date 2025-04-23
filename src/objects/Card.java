@@ -111,4 +111,8 @@ public class Card extends GameObject {
             return this.color;
         }
     }
+
+    public static enum ECardAnimations {
+        DRAW
+    }
 }

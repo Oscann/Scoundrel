@@ -6,6 +6,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import core.gamestate.constants.GameRenderingConstants;
 import objects.Card;
@@ -40,8 +42,10 @@ public class Game extends State {
     private int nRoom = 0;
     private Card[] room = new Card[4];
     private int targetCardIndex = -1;
-
     private int playerLifePoints = 20;
+    private Timer timer = new Timer();
+    private boolean isDrawing = false;
+    private boolean isPopulating = false;
 
     public Game() {
         createDeck();
@@ -70,8 +74,15 @@ public class Game extends State {
     public void update() {
         int nCardsInRoom = getNCardsInRoom();
 
-        if (nCardsInRoom <= 1) {
-            populateRoom();
+        if (nCardsInRoom <= 1)
+            isPopulating = true;
+
+        if (isPopulating && !isDrawing)
+            drawCardFromDeck();
+
+        if (isPopulating && nCardsInRoom == room.length) {
+            isPopulating = false;
+            nRoom++;
         }
 
         for (int i = 0; i < room.length; i++) {
@@ -195,16 +206,6 @@ public class Game extends State {
         Arrays.fill(room, null);
     }
 
-    private void populateRoom() {
-        for (int i = 0; i < room.length; i++) {
-            if (room[i] == null) {
-                drawCardFromDeck();
-            }
-        }
-
-        nRoom++;
-    }
-
     private void drawCardFromDeck() {
         Card c = deck.drawCard();
 
@@ -222,7 +223,17 @@ public class Game extends State {
                 Window.screenSizeUnit) * emptyIndex, ROOM_CARDS_Y);
 
         room[emptyIndex] = c;
+        isDrawing = true;
         c.setCurrAnimation(new CardDrawAnimation(c, deckCoords, destinyCoords));
+
+        timer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                isDrawing = false;
+            }
+
+        }, 500);
     }
 
     public int getNextRoomEmptySpace() {
@@ -268,15 +279,14 @@ public class Game extends State {
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        if (isPopulating)
+            return;
+
         Point clickPoint = e.getPoint();
 
         if (targetCardIndex != -1 && !panel.isInBounds(clickPoint)) {
             resetTarget();
             return;
-        }
-
-        if (deck.isInBounds(clickPoint)) {
-            drawCardFromDeck();
         }
 
         if (panel.isInBounds(clickPoint)) {
