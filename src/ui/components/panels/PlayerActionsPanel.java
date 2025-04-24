@@ -148,7 +148,8 @@ public class PlayerActionsPanel extends GameObject {
 
     public void renderButtons(Graphics g) {
         for (Button btn : getCurrentStateButtons()) {
-            btn.render(g);
+            if (state != EPanelState.DEFAULT || game.getNRoom() > game.getLastRoomRunned() + 1)
+                btn.render(g);
         }
     }
 
@@ -156,7 +157,8 @@ public class PlayerActionsPanel extends GameObject {
         Point clickPoint = mouseEvent.getPoint();
 
         for (Button btn : getCurrentStateButtons()) {
-            if (btn.isInBounds(clickPoint))
+            if (btn.isInBounds(clickPoint) && state != EPanelState.DEFAULT
+                    || game.getNRoom() > game.getLastRoomRunned() + 1)
                 btn.handleClick(mouseEvent);
         }
     }

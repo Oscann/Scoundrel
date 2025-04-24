@@ -46,6 +46,7 @@ public class Game extends State {
     private Timer timer = new Timer();
     private boolean isDrawing = false;
     private boolean isPopulating = false;
+    private int lastRoomRunned = -1;
 
     public Game() {
         createDeck();
@@ -202,6 +203,7 @@ public class Game extends State {
     }
 
     public void run() {
+        lastRoomRunned = nRoom;
         deck.enqueueCards(Arrays.asList(room));
         Arrays.fill(room, null);
     }
@@ -267,6 +269,10 @@ public class Game extends State {
 
     public int getLifePoints() {
         return this.playerLifePoints;
+    }
+
+    public int getLastRoomRunned() {
+        return this.lastRoomRunned;
     }
 
     @Override
