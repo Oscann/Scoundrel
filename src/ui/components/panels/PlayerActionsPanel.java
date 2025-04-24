@@ -156,9 +156,11 @@ public class PlayerActionsPanel extends GameObject {
     public void handleClick(MouseEvent mouseEvent) {
         Point clickPoint = mouseEvent.getPoint();
 
+        if (state == EPanelState.DEFAULT && game.getNRoom() <= game.getLastRoomRunned() + 1)
+            return;
+
         for (Button btn : getCurrentStateButtons()) {
-            if (btn.isInBounds(clickPoint) && state != EPanelState.DEFAULT
-                    || game.getNRoom() > game.getLastRoomRunned() + 1)
+            if (btn.isInBounds(clickPoint))
                 btn.handleClick(mouseEvent);
         }
     }
