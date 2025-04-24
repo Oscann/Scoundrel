@@ -12,4 +12,5 @@ public class CardConstants {
     public static final String HEARTS_ICON_PATH = ".\\res\\cards\\hearts.png";
     public static final String SPADES_ICON_PATH = ".\\res\\cards\\spades.png";
     public static final String DIAMONDS_ICON_PATH = ".\\res\\cards\\diamonds.png";
+    public static final String CARD_BACK_IMAGE_PATH = ".\\res\\cards\\card-back.png";
 }

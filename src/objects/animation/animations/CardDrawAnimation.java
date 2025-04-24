@@ -18,6 +18,7 @@ public class CardDrawAnimation extends AbstractAnimation<Card> {
         int y = (int) destinyCoords.getY();
 
         addStep(() -> {
+            target.setIsFlipped(true);
             target.setX((int) deckCoords.getX());
             target.setY(y);
         }, ticksPerStep);
@@ -33,6 +34,10 @@ public class CardDrawAnimation extends AbstractAnimation<Card> {
         addStep(() -> {
             target.setX((int) destinyCoords.getX());
             target.setY(y);
-        }, ticksPerStep);
+        }, ticksPerStep * 20);
+
+        addStep(() -> {
+            target.setIsFlipped(false);
+        }, 0);
     }
 }

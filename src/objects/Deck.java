@@ -27,7 +27,9 @@ public class Deck extends GameObject {
         int cardsY = (int) (this.y + Window.screenSizeUnit);
 
         g.drawRect(this.x, this.y, width, height);
-        g.fillRect(cardsX, cardsY, Card.BASE_WIDTH, Card.BASE_HEIGHT);
+
+        if (content.size() != 0)
+            g.drawImage(Card.cardBackArt, cardsX, cardsY, Card.BASE_WIDTH, Card.BASE_HEIGHT, null);
     }
 
     @Override

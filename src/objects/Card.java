@@ -15,8 +15,11 @@ import ui.utils.ImageHandling;
 public class Card extends GameObject {
     public static final int BASE_WIDTH = (int) (CardConstants.CARD_WIDTH_RATIO * Window.screenSizeUnit);
     public static final int BASE_HEIGHT = (int) (CardConstants.CARD_HEIGHT_RATIO * Window.screenSizeUnit);
+    public static final BufferedImage cardBackArt = ImageHandling.loadImage(CardConstants.CARD_BACK_IMAGE_PATH);
     private int number;
     private ECardSuits suit;
+    private boolean isFlipped = false;
+
     private AnimationHandler<Card> animHandler = new AnimationHandler<Card>();
 
     public Card(int number, ECardSuits suit) {
@@ -48,20 +51,25 @@ public class Card extends GameObject {
         FontMetrics fontMetrics = g.getFontMetrics();
         String numberLabel = getNumberLabel();
 
-        g.setColor(Color.white);
-        g.fillRect(getX(), getY(), width, height);
+        if (isFlipped) {
+            g.drawImage(cardBackArt, x, y, width, height, null);
+        } else {
+            g.setColor(Color.white);
+            g.fillRect(x, y, width, height);
 
-        int iconSize = (int) (1.5 * Window.screenSizeUnit);
-        int xPadding = (int) (x + Window.screenSizeUnit / 4);
-        int yPadding = y + Window.screenSizeUnit;
-        int cardNY = yPadding + fontMetrics.getHeight() / 2;
-        int cardNX = xPadding + (iconSize - fontMetrics.stringWidth(numberLabel)) / 2;
+            int iconSize = (int) (1.5 * Window.screenSizeUnit);
+            int xPadding = (int) (x + Window.screenSizeUnit / 4);
+            int yPadding = y + Window.screenSizeUnit;
+            int cardNY = yPadding + fontMetrics.getHeight() / 2;
+            int cardNX = xPadding + (iconSize - fontMetrics.stringWidth(numberLabel)) / 2;
 
-        g.setColor(suit.getColor());
+            g.setColor(suit.getColor());
 
-        g.drawString(numberLabel, cardNX,
-                cardNY);
-        g.drawImage(suit.getIcon(), xPadding, yPadding + Window.screenSizeUnit, iconSize, iconSize, null);
+            g.drawString(numberLabel, cardNX,
+                    cardNY);
+            g.drawImage(suit.getIcon(), xPadding, yPadding + Window.screenSizeUnit, iconSize, iconSize, null);
+        }
+
     }
 
     @Override
@@ -87,6 +95,14 @@ public class Card extends GameObject {
                         : number == 12 ? "Q"
                                 : number == 13 ? "K"
                                         : Integer.toString(number);
+    }
+
+    public boolean isFlipped() {
+        return isFlipped;
+    }
+
+    public void setIsFlipped(boolean isFlipped) {
+        this.isFlipped = isFlipped;
     }
 
     public static enum ECardSuits {
