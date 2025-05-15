@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 
 import objects.Card.ECardSuits;
 import ui.Window;
@@ -60,6 +61,14 @@ public class Deck extends GameObject {
     }
 
     public Card drawCard() {
-        return content.remove();
+        try {
+            return content.remove();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
+    public int getLength() {
+        return this.content.size();
     }
 }

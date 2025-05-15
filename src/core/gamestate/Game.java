@@ -75,13 +75,13 @@ public class Game extends State {
     public void update() {
         int nCardsInRoom = getNCardsInRoom();
 
-        if (nCardsInRoom <= 1)
+        if (nCardsInRoom <= 1 && deck.getLength() != 0)
             isPopulating = true;
 
         if (isPopulating && !isDrawing)
             drawCardFromDeck();
 
-        if (isPopulating && nCardsInRoom == room.length) {
+        if (isPopulating && (nCardsInRoom == room.length || deck.getLength() == 0)) {
             isPopulating = false;
             nRoom++;
         }
@@ -90,6 +90,7 @@ public class Game extends State {
             if (room[i] != null)
                 room[i].update();
         }
+
     }
 
     @Override
@@ -211,7 +212,8 @@ public class Game extends State {
     private void drawCardFromDeck() {
         Card c = deck.drawCard();
 
-        addCardToRoom(c);
+        if (c != null)
+            addCardToRoom(c);
     }
 
     private void addCardToRoom(Card c) {

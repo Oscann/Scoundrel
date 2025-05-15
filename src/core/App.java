@@ -40,11 +40,6 @@ public class App implements Runnable {
             deltaU += (now - lastIteration) / timeBetweenUpdates;
             deltaR += (now - lastIteration) / timeBetweenRender;
 
-            // System.out.println(timeBetweenRender);
-            // System.out.println(deltaR);
-            // System.out.println(now - lastIteration);
-            // System.out.println((double) (now - lastIteration) / timeBetweenRender);
-
             if (deltaR >= 1) {
                 root.repaint();
                 deltaR--;
