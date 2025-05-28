@@ -8,7 +8,7 @@ import ui.Window;
 public class App implements Runnable {
     public static Window window;
     public static MainPanel root;
-    public static State currState;
+    private static State currState;
     public static final int FPS = 60, UPS = 200;
 
     public static void main(String[] args) {
@@ -52,5 +52,13 @@ public class App implements Runnable {
 
             lastIteration = now;
         }
+    }
+
+    public static void setCurrState(State state) {
+        App.currState = state;
+    }
+
+    public static State getCurrState() {
+        return App.currState;
     }
 }

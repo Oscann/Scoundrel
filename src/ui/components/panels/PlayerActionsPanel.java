@@ -13,8 +13,9 @@ import core.gamestate.constants.GameRenderingConstants;
 import objects.GameObject;
 import ui.Window;
 import ui.components.buttons.Button;
+import ui.components.interfaces.Interectable;
 
-public class PlayerActionsPanel extends GameObject {
+public class PlayerActionsPanel extends GameObject implements Interectable {
 
     private Game game;
     private EPanelState state = EPanelState.DEFAULT;

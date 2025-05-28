@@ -10,37 +10,37 @@ public class MouseInputs implements MouseMotionListener, MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        App.currState.mouseClicked(e);
+        App.getCurrState().mouseClicked(e);
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        App.currState.mousePressed(e);
+        App.getCurrState().mousePressed(e);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        App.currState.mouseReleased(e);
+        App.getCurrState().mouseReleased(e);
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        App.currState.mouseEntered(e);
+        App.getCurrState().mouseEntered(e);
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        App.currState.mouseExited(e);
+        App.getCurrState().mouseExited(e);
     }
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        App.currState.mouseDragged(e);
+        App.getCurrState().mouseDragged(e);
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        App.currState.mouseMoved(e);
+        App.getCurrState().mouseMoved(e);
     }
 
 }

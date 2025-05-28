@@ -16,6 +16,7 @@ import objects.WeaponSlot;
 import objects.Card.ECardSuits;
 import objects.animation.animations.CardDrawAnimation;
 import ui.Window;
+import ui.components.modals.EndGameModal;
 import ui.components.panels.PlayerActionsPanel;
 import ui.components.panels.PlayerActionsPanel.EPanelState;
 
@@ -39,14 +40,18 @@ public class Game extends State {
     private Deck deck;
     private WeaponSlot weapon;
     private PlayerActionsPanel panel;
-    private int nRoom = 0;
     private Card[] room = new Card[4];
-    private int targetCardIndex = -1;
-    private int playerLifePoints = 20;
+    private EndGameModal endGameModal = new EndGameModal(this);
+
     private Timer timer = new Timer();
+
     private boolean isDrawing = false;
     private boolean isPopulating = false;
+    private int nRoom = 0;
+    private int targetCardIndex = -1;
+    private int playerLifePoints = 20;
     private int lastRoomRunned = -1;
+    private EGameStatus gameStatus = EGameStatus.ONGOING;
 
     public Game() {
         createDeck();
@@ -69,6 +74,9 @@ public class Game extends State {
 
             room[i].render(g);
         }
+
+        if (gameStatus != EGameStatus.ONGOING)
+            endGameModal.render(g);
     }
 
     @Override
@@ -86,11 +94,15 @@ public class Game extends State {
             nRoom++;
         }
 
+        if (nCardsInRoom == 0 && deck.getLength() == 0)
+            gameStatus = EGameStatus.WON;
+        else if (playerLifePoints <= 0)
+            gameStatus = EGameStatus.LOST;
+
         for (int i = 0; i < room.length; i++) {
             if (room[i] != null)
                 room[i].update();
         }
-
     }
 
     @Override
@@ -277,6 +289,10 @@ public class Game extends State {
         return this.lastRoomRunned;
     }
 
+    public EGameStatus getGameStatus() {
+        return this.gameStatus;
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
     }
@@ -287,6 +303,11 @@ public class Game extends State {
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        if (gameStatus != EGameStatus.ONGOING) {
+            endGameModal.handleClick(e);
+            return;
+        }
+
         if (isPopulating)
             return;
 
@@ -325,5 +346,11 @@ public class Game extends State {
     @Override
     public void mouseMoved(MouseEvent e) {
 
+    }
+
+    public enum EGameStatus {
+        ONGOING,
+        WON,
+        LOST
     }
 }

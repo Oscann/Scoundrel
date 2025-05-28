@@ -4,14 +4,16 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
 import core.gamestate.constants.GameRenderingConstants;
 import objects.GameObject;
 import ui.Window;
+import ui.components.interfaces.Interectable;
 import ui.events.MouseClickEventHandler;
 
-public class Button extends GameObject {
+public class Button extends GameObject implements Interectable {
 
     private boolean isHovering;
     private MouseClickEventHandler clickEvent;
@@ -19,6 +21,11 @@ public class Button extends GameObject {
 
     public Button(String text) {
         this.text = text;
+    }
+
+    public Button(String text, Rectangle bounds) {
+        this.text = text;
+        this.setBounds(bounds);
     }
 
     @Override
