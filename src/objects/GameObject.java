@@ -61,8 +61,4 @@ public abstract class GameObject {
     public boolean isInBounds(Point p) {
         return this.getBounds().contains(p);
     }
-
-    public boolean isInBounds(int x, int y) {
-        return this.getBounds().contains(new Point(x, y));
-    }
 }

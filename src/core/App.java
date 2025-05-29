@@ -1,6 +1,6 @@
 package core;
 
-import core.gamestate.Game;
+import core.gamestate.MainMenu;
 import core.gamestate.State;
 import ui.MainPanel;
 import ui.Window;
@@ -18,7 +18,7 @@ public class App implements Runnable {
     public static void start() {
         root = new MainPanel();
         window = new Window(root);
-        currState = new Game();
+        currState = new MainMenu();
 
         Thread gameThread = new Thread(new App());
         gameThread.start();

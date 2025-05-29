@@ -63,4 +63,8 @@ public class Button extends GameObject implements Interectable {
     public void setIsHovering(boolean isHovering) {
         this.isHovering = isHovering;
     }
+
+    public String getText() {
+        return this.text;
+    }
 }

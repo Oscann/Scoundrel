@@ -8,7 +8,9 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import core.App;
 import core.gamestate.Game;
+import core.gamestate.MainMenu;
 import core.gamestate.constants.GameRenderingConstants;
 import objects.GameObject;
 import ui.Window;
@@ -58,37 +60,29 @@ public class PlayerActionsPanel extends GameObject implements Interectable {
     }
 
     public void createDefaultStateButtons() {
-        Button runButton = new Button("RUN");
-
-        runButton.setWidth(buttonWidth);
-        runButton.setHeight(buttonHeight);
-        runButton.setX(this.x + BUTTON_AREA_PADDING);
-        runButton.setY(this.y + BUTTON_AREA_PADDING);
-
+        Button runButton = new Button("RUN", getButtonBoundsForIndex(0));
         runButton.setClickEvent((e) -> {
             game.run();
         });
 
+        Button exitButton = new Button("EXIT", getButtonBoundsForIndex(1));
+        exitButton.setClickEvent((e) -> {
+            App.setCurrState(new MainMenu());
+        });
+
         DEFAULT_STATE_BUTTONS.add(runButton);
+        DEFAULT_STATE_BUTTONS.add(exitButton);
     }
 
     public void createAttackingStateButtons() {
-        Button armedAttackButton = new Button("ARMED ATTACK");
+        Button armedAttackButton = new Button("ARMED ATTACK", getButtonBoundsForIndex(0));
 
-        armedAttackButton.setWidth(buttonWidth);
-        armedAttackButton.setHeight(buttonHeight);
-        armedAttackButton.setX(this.x + BUTTON_AREA_PADDING);
-        armedAttackButton.setY(this.y + BUTTON_AREA_PADDING);
         armedAttackButton.setClickEvent((e) -> {
             game.handleAttack(true);
         });
 
-        Button bareHandedAttackButton = new Button("BARE HANDED");
+        Button bareHandedAttackButton = new Button("BARE HANDED", getButtonBoundsForIndex(1));
 
-        bareHandedAttackButton.setWidth(buttonWidth);
-        bareHandedAttackButton.setHeight(buttonHeight);
-        bareHandedAttackButton.setX((int) (this.x + BUTTON_AREA_PADDING));
-        bareHandedAttackButton.setY((int) (this.y + BUTTON_AREA_PADDING + Window.screenSizeUnit + buttonHeight));
         bareHandedAttackButton.setClickEvent((e) -> {
             game.handleAttack(false);
         });
@@ -98,22 +92,14 @@ public class PlayerActionsPanel extends GameObject implements Interectable {
     }
 
     public void createWeaponChangeStateButtons() {
-        Button disposeWeaponButton = new Button("DISPOSE WEAPON");
+        Button disposeWeaponButton = new Button("DISPOSE WEAPON", getButtonBoundsForIndex(0));
 
-        disposeWeaponButton.setWidth(buttonWidth);
-        disposeWeaponButton.setHeight(buttonHeight);
-        disposeWeaponButton.setX(this.x + BUTTON_AREA_PADDING);
-        disposeWeaponButton.setY(this.y + BUTTON_AREA_PADDING);
         disposeWeaponButton.setClickEvent(e -> {
             game.handleWeaponChange();
         });
 
-        Button keepWeaponButton = new Button("KEEP WEAPON");
+        Button keepWeaponButton = new Button("KEEP WEAPON", getButtonBoundsForIndex(1));
 
-        keepWeaponButton.setWidth(buttonWidth);
-        keepWeaponButton.setHeight(buttonHeight);
-        keepWeaponButton.setX((int) (this.x + BUTTON_AREA_PADDING));
-        keepWeaponButton.setY((int) (this.y + BUTTON_AREA_PADDING + Window.screenSizeUnit + buttonHeight));
         keepWeaponButton.setClickEvent(e -> {
             game.resetTarget();
             this.setState(EPanelState.DEFAULT);
@@ -149,7 +135,9 @@ public class PlayerActionsPanel extends GameObject implements Interectable {
 
     public void renderButtons(Graphics g) {
         for (Button btn : getCurrentStateButtons()) {
-            if (state != EPanelState.DEFAULT || game.getNRoom() > game.getLastRoomRunned() + 1)
+            if (state != EPanelState.DEFAULT ||
+                    game.getNRoom() > game.getLastRoomRunned() + 1 ||
+                    btn.getText() != "RUN")
                 btn.render(g);
         }
     }
@@ -157,13 +145,19 @@ public class PlayerActionsPanel extends GameObject implements Interectable {
     public void handleClick(MouseEvent mouseEvent) {
         Point clickPoint = mouseEvent.getPoint();
 
-        if (state == EPanelState.DEFAULT && game.getNRoom() <= game.getLastRoomRunned() + 1)
-            return;
-
         for (Button btn : getCurrentStateButtons()) {
-            if (btn.isInBounds(clickPoint))
+            if (btn.isInBounds(clickPoint)
+                    && !(game.getNRoom() <= game.getLastRoomRunned() + 1 && btn.getText() == "RUN"))
                 btn.handleClick(mouseEvent);
         }
+    }
+
+    private Rectangle getButtonBoundsForIndex(int i) {
+        return new Rectangle(
+                this.x + BUTTON_AREA_PADDING,
+                this.y + BUTTON_AREA_PADDING + (Window.screenSizeUnit + buttonHeight) * i,
+                buttonWidth,
+                buttonHeight);
     }
 
     public ArrayList<Button> getCurrentStateButtons() {

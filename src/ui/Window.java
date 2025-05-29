@@ -11,7 +11,7 @@ public class Window extends JFrame {
     public static int screenSizeUnit;
 
     public Window(MainPanel root) {
-        this.setTitle("Solitaire");
+        this.setTitle("Scoundrel");
         this.setResizable(false);
         this.setExtendedState(MAXIMIZED_BOTH);
 
