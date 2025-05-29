@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import core.App;
 import core.gamestate.Game;
+import core.gamestate.MainMenu;
 import core.gamestate.Game.EGameStatus;
 import core.gamestate.constants.GameRenderingConstants;
 import ui.Window;
@@ -86,6 +87,7 @@ public class EndGameModal extends AbstractCenteredModal {
 
         Button exitButton = new Button("EXIT", new Rectangle(secondButtonX, buttonY, buttonWidth, buttonHeight));
         exitButton.setClickEvent((event) -> {
+            App.setCurrState(new MainMenu());
         });
 
         this.buttons.add(exitButton);
